@@ -6,16 +6,16 @@ from PIL import Image
 import numpy as np
 
 
-class CelebADataset(torch.utils.data.Dataset):
+class DGANCarDataset(torch.utils.data.Dataset):
     def __init__(self, opt, for_metrics):
         if opt.phase == "test" or for_metrics:
             opt.load_size = 256
         else:
             opt.load_size = 286
         opt.crop_size = 256
-        opt.label_nc = 9
+        opt.label_nc = 20
         opt.contain_dontcare_label = True
-        opt.semantic_nc = 10 # label_nc + unknown
+        opt.semantic_nc = 21 # label_nc + unknown
         opt.cache_filelist_read = False
         opt.cache_filelist_write = False
         opt.aspect_ratio = 1.0
@@ -37,14 +37,14 @@ class CelebADataset(torch.utils.data.Dataset):
     def list_images(self):
         # mode = "validation" if self.opt.phase == "test" or self.for_metrics else "training"
             
-        root = '/work/i0manker/Datasets/CelebA'
-        path_filelist = os.path.join('scripts/train_filelist', 'celebAMask_train_labeled.txt')
+        root = '/work/i0manker/Datasets/DGAN_Car_v1/'
+        path_filelist = os.path.join(root, 'filelist.txt')
         img_list = []
         with open(path_filelist, 'r') as infile:
             for x in infile.readlines():
                 img_list.append(x.strip())
-        path_img = os.path.join(root, 'CelebA-HQ-img')
-        path_lab = os.path.join(root, 'CelebAMask-HQ-mask-LabelImg_9_noGlass')
+        path_img = os.path.join(root, 'images')
+        path_lab = os.path.join(root, 'labels')
         images = [x for x in img_list]
         labels = [x[:-4] + '.png' for x in img_list]
         # NOTICE Line 34 (*255)
@@ -72,13 +72,6 @@ class CelebADataset(torch.utils.data.Dataset):
         # normalize
         image = TR.functional.normalize(image, (0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         return image, label
-
-    
-# unlabeled_root: '../TWCC/Dataset/FFHQ/images512x512'
-# unlabeled_filelist: '../TWCC/Dataset/FFHQ/filelist.txt'
-# labeled_image_root: '../TWCC/Dataset/CelebA/CelebAMask-HQ/CelebA-HQ-img/'
-# labeled_mask_root: '../TWCC/Dataset/CelebA/CelebAMask-HQ/CelebAMask-HQ-mask-LabelImg_9_noGlass/'
-# labeled_filelist: '../TWCC/Dataset/CelebA/CelebAMask-HQ/z_semi_filelist/celebAMask_train_labeled.txt'
 
 # unlabeled_root: '../TWCC/Dataset/StanfordCar/'
 # unlabeled_filelist: '../TWCC/Dataset/StanfordCar/filelist.txt'

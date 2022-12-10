@@ -10,6 +10,10 @@ def get_dataset_name(mode):
         return "CocoStuffDataset"
     if mode == "celeba":
         return "CelebADataset"
+    if mode == "DGANCar":
+        return "DGANCarDataset"
+    if mode == "DGANCat":
+        return "DGANCatDataset"
     else:
         ValueError("There is no such dataset regime as %s" % mode)
 
